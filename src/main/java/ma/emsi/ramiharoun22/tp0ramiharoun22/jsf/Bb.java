@@ -115,25 +115,67 @@ public class Bb implements Serializable {
      */
     public String envoyer() {
         if (question == null || question.isBlank()) {
-            // Erreur ! Le formulaire va être réaffiché en réponse à la requête POST, avec un message d'erreur.
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Texte question vide", "Il manque le texte de la question");
             facesContext.addMessage(null, message);
             return null;
         }
-        // Entourer la réponse avec "||".
+
         this.reponse = "||";
-        // Si la conversation n'a pas encore commencé, ajouter le rôle système au début de la réponse
+
         if (this.conversation.isEmpty()) {
-            // Ajouter le rôle système au début de la réponse
             this.reponse += roleSysteme.toUpperCase(Locale.FRENCH) + "\n";
-            // Invalide le bouton pour changer le rôle système
             this.roleSystemeChangeable = false;
         }
-        this.reponse += question.toLowerCase(Locale.FRENCH) + "||";
-        // La conversation contient l'historique des questions-réponses depuis le début.
+
+
+        String q = question.trim();
+
+        // 1. Nettoyer : minuscules, suppression accents/ponctuation
+        String nettoye = nettoyerTexte(q);
+
+        // 2. Appliquer chiffrement César (+3)
+        String chiffre = cesar(nettoye, 3);
+
+        // 3. Construire la réponse finale
+        String rendu = "Texte nettoyé : " + nettoye + "\n"
+                + "Texte chiffré (César +3) : " + chiffre;
+
+        this.reponse += rendu + "||";
+        // ------------------------------------------------
+
         afficherConversation();
         return null;
+    }
+    /** Supprime les accents, passe en minuscules et enlève la ponctuation. */
+    private String nettoyerTexte(String s) {
+        if (s == null) return "";
+
+        // Normalisation Unicode pour séparer accents
+        String normalise = java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD);
+        // Supprimer les marques diacritiques (accents)
+        String sansAccents = normalise.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        // Supprimer la ponctuation et caractères spéciaux
+        String sansPonctuation = sansAccents.replaceAll("[^a-zA-Z0-9\\s]", "");
+        // Mettre en minuscules et retirer espaces multiples
+        return sansPonctuation.toLowerCase(Locale.FRENCH).trim().replaceAll("\\s+", " ");
+    }
+
+    /** Chiffrement César simple (+n sur A-Z/a-z uniquement). */
+    private String cesar(String s, int shift) {
+        if (s == null) return "";
+        int n = ((shift % 26) + 26) % 26;
+        StringBuilder sb = new StringBuilder();
+        for (char c : s.toCharArray()) {
+            if (c >= 'A' && c <= 'Z') {
+                sb.append((char) ('A' + (c - 'A' + n) % 26));
+            } else if (c >= 'a' && c <= 'z') {
+                sb.append((char) ('a' + (c - 'a' + n) % 26));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
     /**
