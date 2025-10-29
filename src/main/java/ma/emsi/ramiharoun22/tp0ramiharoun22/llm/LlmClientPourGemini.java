@@ -32,7 +32,7 @@ public class LlmClientPourGemini implements Serializable {
     public LlmClientPourGemini() {
         // Récupère la clé secrète pour travailler avec l'API du LLM, mise dans une variable d'environnement
         // du système d'exploitation.
-        this.key = System.getenv("GEMINI_KE");
+        this.key = System.getenv("GEMINI_KEY");
         if (this.key == null || this.key.isBlank()) {
             throw new IllegalStateException("Variable d'environnement GEMINI_KEY manquante !");
         }
