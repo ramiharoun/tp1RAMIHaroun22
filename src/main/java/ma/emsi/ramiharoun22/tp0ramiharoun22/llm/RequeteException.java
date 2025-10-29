@@ -3,19 +3,39 @@ package ma.emsi.ramiharoun22.tp0ramiharoun22.llm;
 
 
 
+
+/**
+ * Exception levée si on envoie une mauvaise requête à l'API du LLM.
+ */
 public class RequeteException extends Exception {
+    /**
+     * Statut de la réponse du LLM.
+     */
+    private int status;
+    private String requeteJson;
 
+    public RequeteException(int status) {
+        this.status = status;
+    }
 
-    private String jsonRequete;
     public RequeteException(String message) {
         super(message);
     }
-    public RequeteException(String message, String jsonRequete) {
+
+    public RequeteException(String message, String requeteJson) {
         super(message);
-        this.jsonRequete = jsonRequete;
+        this.requeteJson = requeteJson;
     }
 
-    public String getJsonRequete() {
-        return jsonRequete;
+    public RequeteException() {
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public String getRequeteJson() {
+        return requeteJson;
     }
 }
+
