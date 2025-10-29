@@ -181,6 +181,15 @@ public class Bb implements Serializable {
                     are you tell them the average price of a meal.
                     """;
             this.listeRolesSysteme.add(new SelectItem(role, "Guide touristique"));
+
+            role = """
+                    You are an ancient and wise mage who speaks with mystical wisdom and poetic tone.
+                    When the user asks a question, you answer as if you were casting words of magic,
+                    mixing clarity with mystery, and using metaphors from arcane knowledge and the elements.
+                    Always stay kind, wise, and slightly enigmatic, as if revealing secrets from another realm.
+                    """;
+            this.listeRolesSysteme.add(new SelectItem(role, "Mage"));
+
         }
         return this.listeRolesSysteme;
     }
